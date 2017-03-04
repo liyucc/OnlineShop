@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans  xmlns="http://www.springframework.org/schema/beans" 
+		xmlns:context="http://www.springframework.org/schema/context" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:aop="http://www.springframework.org/schema/aop"  
+		xmlns:tx="http://www.springframework.org/schema/tx"    
+		xsi:schemaLocation="  
+			http://www.springframework.org/schema/context  
+			http://www.springframework.org/schema/context/spring-context.xsd  
+			http://www.springframework.org/schema/beans  
+			http://www.springframework.org/schema/beans/spring-beans.xsd  
+			http://www.springframework.org/schema/tx  
+			http://www.springframework.org/schema/tx/spring-tx.xsd    
+			http://www.springframework.org/schema/aop  
+			http://www.springframework.org/schema/aop/spring-aop.xsd"> 
+	<!--配置连接池  -->
+	<!--引入外部属性文件  -->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	<!--配置c3p0连接池 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClass}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		 <property name="minPoolSize" value="5" />  
+		 <property name="maxPoolSize" value="20" />  
+		 <property name="maxStatements" value="10" />  
+		 <property name="idleConnectionTestPeriod" value="3000" />  
+		 <property name="loginTimeout" value="300" />  
+	</bean>
+	<!--hibernate的相关信息  -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<!-- entity包扫描范围 -->  
+      	<property name="packagesToScan">  
+         <list>  
+            <value>com.cong.shop.user.vo</value>  
+            <value>com.cong.shop.category.vo</value>
+            <value>com.cong.shop.product.vo</value>
+            <value>com.cong.shop.categorysecond.vo</value>
+            <value>com.cong.shop.order.vo</value>
+            <value>com.cong.shop.admin.vo</value>
+         </list>  
+     	 </property>
+		<!--注入连接池  -->
+		<property name="dataSource" ref="dataSource"/>
+		<!--配置hibernate的其他属性  -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+	</bean>
+	<!--配置事务  -->
+	<!--配置事务管理器  -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!--开启注解事务  -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<context:component-scan base-package="com.cong.shop.."/>
+	
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate4.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+</beans> 	
