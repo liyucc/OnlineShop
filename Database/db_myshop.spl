@@ -1,0 +1,155 @@
+/*
+SQLyog 企业版 - MySQL GUI v8.14 
+MySQL - 5.7.10 : Database - db_myshop
+*********************************************************************
+*/
+
+/*!40101 SET NAMES utf8 */;
+
+/*!40101 SET SQL_MODE=''*/;
+
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`db_myshop` /*!40100 DEFAULT CHARACTER SET utf8 */;
+
+USE `db_myshop`;
+
+/*Table structure for table `adminuser` */
+
+DROP TABLE IF EXISTS `adminuser`;
+
+CREATE TABLE `adminuser` (
+  `uid` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+/*Data for the table `adminuser` */
+
+insert  into `adminuser`(`uid`,`username`,`password`) values (1,'admin','admin');
+
+/*Table structure for table `category` */
+
+DROP TABLE IF EXISTS `category`;
+
+CREATE TABLE `category` (
+  `cid` int(11) NOT NULL AUTO_INCREMENT,
+  `cname` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`cid`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+
+/*Data for the table `category` */
+
+insert  into `category`(`cid`,`cname`) values (15,'新鲜水果'),(16,'新鲜蔬菜'),(17,'各色茶叶'),(18,'肉类海鲜'),(19,'谷薯杂粮'),(20,'蛋奶制品'),(21,'农资农机');
+
+/*Table structure for table `categorysecond` */
+
+DROP TABLE IF EXISTS `categorysecond`;
+
+CREATE TABLE `categorysecond` (
+  `csid` int(11) NOT NULL AUTO_INCREMENT,
+  `csname` varchar(255) DEFAULT NULL,
+  `cid` int(11) DEFAULT NULL,
+  PRIMARY KEY (`csid`),
+  KEY `FK936FCAF21DB1FD15` (`cid`),
+  CONSTRAINT `FK936FCAF21DB1FD15` FOREIGN KEY (`cid`) REFERENCES `category` (`cid`)
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8;
+
+/*Data for the table `categorysecond` */
+
+insert  into `categorysecond`(`csid`,`csname`,`cid`) values (46,'无公害蔬菜',16),(47,'特色菜类',16),(48,'有机蔬菜',16),(50,'猪肉',18),(51,'家禽',18),(52,'鱼虾',18),(53,'牛羊肉',18),(54,'蛋类',20),(55,'奶类',20),(56,'豆类',20),(57,'浆果类',15),(58,'柑橘类',15),(59,'核果类',15),(60,'瓜类',15),(61,'农业机械',21),(62,'各类种子',21),(63,'绿色化肥',21),(64,'种植技术书籍',21),(65,'各色大米',19),(66,'各色面粉',19),(67,'红薯白薯',19),(68,'八宝粗粮',19),(69,'红茶绿茶',17),(70,'花茶',17),(71,'黑茶',17),(72,'乌龙茶',17);
+
+/*Table structure for table `orderitem` */
+
+DROP TABLE IF EXISTS `orderitem`;
+
+CREATE TABLE `orderitem` (
+  `itemid` int(11) NOT NULL AUTO_INCREMENT,
+  `count` int(11) DEFAULT NULL,
+  `subtotal` double DEFAULT NULL,
+  `pid` int(11) DEFAULT NULL,
+  `oid` int(11) DEFAULT NULL,
+  PRIMARY KEY (`itemid`),
+  KEY `FKE8B2AB6166C01961` (`oid`),
+  KEY `FKE8B2AB6171DB7AE4` (`pid`),
+  CONSTRAINT `FKE8B2AB6140ACF87A` FOREIGN KEY (`oid`) REFERENCES `orders` (`oid`),
+  CONSTRAINT `FKE8B2AB6171DB7AE4` FOREIGN KEY (`pid`) REFERENCES `product` (`pid`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+
+/*Data for the table `orderitem` */
+
+insert  into `orderitem`(`itemid`,`count`,`subtotal`,`pid`,`oid`) values (13,1,8.6,88,800008),(14,1,1.3,77,800009),(15,1,8.6,88,800009),(16,2,19.6,89,800009);
+
+/*Table structure for table `orders` */
+
+DROP TABLE IF EXISTS `orders`;
+
+CREATE TABLE `orders` (
+  `oid` int(11) NOT NULL AUTO_INCREMENT,
+  `total` double DEFAULT NULL,
+  `ordertime` datetime DEFAULT NULL,
+  `state` int(11) DEFAULT NULL,
+  `name` varchar(20) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `addr` varchar(50) DEFAULT NULL,
+  `uid` int(11) DEFAULT NULL,
+  PRIMARY KEY (`oid`),
+  KEY `FKC3DF62E5AA3D9C7` (`uid`),
+  CONSTRAINT `FKC3DF62E5AA3D9C7` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=800010 DEFAULT CHARSET=utf8;
+
+/*Data for the table `orders` */
+
+insert  into `orders`(`oid`,`total`,`ordertime`,`state`,`name`,`phone`,`addr`,`uid`) values (800008,8.6,'2017-03-02 21:21:53',1,NULL,NULL,NULL,1),(800009,29.5,'2017-03-02 21:44:54',1,'洛烟青华','15671360067','罗南路落山道75号',1);
+
+/*Table structure for table `product` */
+
+DROP TABLE IF EXISTS `product`;
+
+CREATE TABLE `product` (
+  `pid` int(11) NOT NULL AUTO_INCREMENT,
+  `pname` varchar(255) DEFAULT NULL,
+  `market_price` double DEFAULT NULL,
+  `shop_price` double DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `pdesc` varchar(255) DEFAULT NULL,
+  `is_hot` int(11) DEFAULT NULL,
+  `pdate` datetime DEFAULT NULL,
+  `csid` int(11) DEFAULT NULL,
+  PRIMARY KEY (`pid`),
+  KEY `FKED8DCCEFB9B74E02` (`csid`),
+  CONSTRAINT `FKED8DCCEFB9B74E02` FOREIGN KEY (`csid`) REFERENCES `categorysecond` (`csid`)
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8;
+
+/*Data for the table `product` */
+
+insert  into `product`(`pid`,`pname`,`market_price`,`shop_price`,`image`,`pdesc`,`is_hot`,`pdate`,`csid`) values (77,'白菜花',1.5,1.3,'products/baicaihua.jpg','												白菜花的营养较一般蔬菜丰富，它含有蛋白质、脂肪、碳水化合物、食物纤维、维生素A、B、C、E、P、U和钙、磷、铁等矿物质。食后极易消化吸收，适宜于中老年人、小孩和脾胃虚弱、消化功能不强者食用。\r\n						\r\n						',0,'2017-03-02 10:55:03',46),(78,'芹菜',2,1.8,'products/qincai.jpg','新鲜有营养，多吃多健康',1,'2017-03-02 11:04:35',46),(79,'圆白菜',2.5,2.3,'products/yuanbaicai.jpg','富含维生素，具有很高的营养价值，适合老人和小孩食用，增强身体抵抗力',1,'2017-03-02 11:06:21',46),(80,'韭菜',2.2,2,'products/jiucai.jpg','烧烤必备良品，口感极佳，新鲜又营养',0,'2017-03-02 11:08:06',46),(81,'豌豆',3,2.5,'products/wandou.jpg','富含维生素C，天然的绿色食品，与其他菜系相搭配，口感更佳',0,'2017-03-02 11:10:27',46),(83,'紫甘蓝',4,4.5,'products/ziganlan.jpg','有极高的药疗价值，对于身体抵抗力的增强有极大的作用',1,'2017-03-02 11:21:00',48),(84,'大冬瓜',2,1.8,'products/dadonggua.jpg','居家餐食的健康蔬菜，健康绿色有营养',0,'2017-03-02 11:22:40',47),(85,'香菜',3.4,3.2,'products/xiangcai.jpg','百搭的菜品，点缀其他菜系，添加菜系色泽',0,'2017-03-02 11:24:21',47),(86,'哈密瓜',8,7.9,'products/hamigua.jpg','甘甜香醇，美味可口',1,'2017-03-02 11:34:42',60),(87,'西瓜',5,4.8,'products/xigua.jpg','夏季必备降温水果，冰镇更佳',1,'2017-03-02 11:35:40',60),(88,'蓝莓',8.8,8.6,'products/lanmei.jpg','好吃的浆果',0,'2017-03-02 11:43:14',57),(89,'山莓',40,9.8,'products/shanmei.bmp','好吃的浆果',1,'2017-03-02 11:44:11',57),(90,'猕猴桃',8,8.6,'products/mihoutao.jpg','味道极佳',1,'2017-03-02 11:44:54',59),(91,'葡萄',9,8.8,'products/putao.jpg','非常好吃',1,'2017-03-02 11:45:46',59),(92,'柚子',5,4.8,'products/youzi.png','美味，新鲜，绿色',1,'2017-03-02 11:49:38',58),(93,'无花果',12,11.8,'products/wuhuaguo.jpg','野外水果，甘甜可口',0,'2017-03-02 11:51:06',59),(94,'雪梨',6,5.8,'products/xueli.jpg','甘甜，水分含量超级高',1,'2017-03-02 11:52:06',59);
+
+/*Table structure for table `user` */
+
+DROP TABLE IF EXISTS `user`;
+
+CREATE TABLE `user` (
+  `uid` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `addr` varchar(255) DEFAULT NULL,
+  `state` int(11) DEFAULT NULL,
+  `code` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+/*Data for the table `user` */
+
+insert  into `user`(`uid`,`username`,`password`,`name`,`email`,`phone`,`addr`,`state`,`code`) values (1,'小小','123456','洛烟青华','aaa@eyou.com','15671360067','罗南路落山道75号',1,'');
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
